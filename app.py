@@ -154,12 +154,12 @@ if vista == "⚙️ Director de Torneo":
 # ==========================================
 # VISTA: VOTACIÓN PÚBLICA (JEFES DE EQUIPO)
 # ==========================================
-elif vista == "🏆 Votación pública":
-   col_logo, col_texto = st.columns([1, 5])
-with col_logo:
-    st.image("logo.png", use_container_width=True)
-with col_texto:
-    st.title("Elección de los Mejores del Torneo")
+elif vista == "🏆 Votación Pública":
+    col_logo, col_texto = st.columns([1, 5])
+    with col_logo:
+        st.image("logo.png", use_container_width=True)
+    with col_texto:
+        st.title("Elección de los mejores del Torneo")
     
     if not datos:
         st.warning("⏳ El Director de Torneo está configurando el sistema.")
