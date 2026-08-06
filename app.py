@@ -82,16 +82,17 @@ def procesar_dat(ruta_archivo):
 datos = procesar_dat("torneo.dat")
 
 # --- BARRA LATERAL ---
-st.sidebar.image("logo.png", width=150)
-st.sidebar.title("Menú del Torneo")
+# --- ACCESO Y MENÚ SECRETO ---
+param_admin = st.query_params.get("admin", "no")
 
-param_vista = st.query_params.get("vista", "menu")
-
-if param_vista == "votante":
-    vista = "🏆 Votación Pública"
-else:
+if param_admin == "si":
+    # Este menú solo aparece con el link especial de la mesa de control
+    st.sidebar.image("logo.png", width=150)
+    st.sidebar.title("Menú de Control")
     vista = st.sidebar.radio("Navegación:", ["🏆 Votación Pública", "⚙️ Director de Torneo"])
-
+else:
+    # Todo el público va directo a votar, no ven menú lateral
+    vista = "🏆 Votación Pública"
 # ==========================================
 # VISTA: DIRECTOR DE TORNEO (ADMINISTRADOR)
 # ==========================================
@@ -274,3 +275,5 @@ elif vista == "🏆 Votación Pública":
                             
                             st.balloons()
                             st.success("✅ Tus votos han sido enviados. Puedes cerrar esta ventana.")
+st.divider()
+st.markdown("<div style='text-align: center; color: gray;'><small>Desarrollado con 💻 por <b>Mariela Rosales</b></small></div>", unsafe_allow_html=True)
