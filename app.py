@@ -86,7 +86,7 @@ datos = procesar_dat("torneo.dat")
 param_admin = st.query_params.get("admin", "no")
 
 if param_admin == "si":
-    # Este menú solo aparece con el link especial de la mesa de control
+    # Este menú solo aparece con el link especial del Director de Torneo
     st.sidebar.image("logo.png", width=150)
     st.sidebar.title("Menú de Control")
     vista = st.sidebar.radio("Navegación:", ["🏆 Votación Pública", "⚙️ Director de Torneo"])
@@ -189,7 +189,7 @@ elif vista == "🏆 Votación Pública":
     with col_logo:
         st.image("logo.png", use_container_width=True)
     with col_texto:
-        st.title("Elección de los mejores del Torneo")
+        st.title("Elección de mejor jugador y mejor arquero del Torneo")
         
     if not datos:
         st.warning("⏳ El Director de Torneo está configurando el sistema.")
@@ -197,7 +197,7 @@ elif vista == "🏆 Votación Pública":
         lista_equipos = ["-- Seleccionar --"] + sorted(list(datos.keys()))
         arqueros_config = cargar_arqueros()
         
-        st.subheader("Identificación del Votante")
+        st.subheader("Identificación del votante")
         colA, colB = st.columns(2)
         
         with colA:
@@ -232,7 +232,7 @@ elif vista == "🏆 Votación Pública":
                             if es_arquero:
                                 opciones = [j for j in jugs_formateados if j in arqueros_config]
                                 if not opciones:
-                                    st.warning(f"La mesa de control aún no asignó arqueros para {eq}.")
+                                    st.warning(f"El Director de Torneo aún no asignó arqueros para {eq}.")
                             else:
                                 opciones = [j for j in jugs_formateados if j not in arqueros_config]
                                 
