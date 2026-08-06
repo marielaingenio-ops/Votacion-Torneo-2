@@ -90,7 +90,7 @@ param_vista = st.query_params.get("vista", "menu")
 if param_vista == "votante":
     vista = "🏆 Votación Pública"
 else:
-    vista = st.sidebar.radio("Navegación:", ["🏆 Votación Pública", "⚙️ Mesa de Control"])
+    vista = st.sidebar.radio("Navegación:", ["🏆 Votación Pública", "⚙️ Director de Torneo"])
 
 # ==========================================
 # VISTA: DIRECTOR DE TORNEO (ADMINISTRADOR)
@@ -107,7 +107,7 @@ if vista == "⚙️ Director de Torneo":
             st.success("✅ Archivo 'torneo.dat' leído correctamente.")
             
             st.divider()
-            st.subheader("1. Separar Arqueros")
+            st.subheader("1. Separar arqueros")
             st.markdown("Selecciona los arqueros de cada equipo para que no aparezcan en la lista de jugadores de campo.")
             
             arqueros_actuales = cargar_arqueros()
@@ -125,7 +125,7 @@ if vista == "⚙️ Director de Torneo":
                     )
                     nuevos_arqueros.extend(seleccion)
                 
-                if st.button("💾 Guardar Configuración de Arqueros", type="primary"):
+                if st.button("💾 Guardar configuración de arqueros", type="primary"):
                     guardar_arqueros(nuevos_arqueros)
                     st.success("¡Listas actualizadas y separadas con éxito!")
                     st.rerun()
@@ -136,12 +136,12 @@ if vista == "⚙️ Director de Torneo":
             if not df_votos.empty:
                 col1, col2 = st.columns(2)
                 with col1:
-                    st.markdown("##### 🥇 Ranking Jugadores de Campo")
+                    st.markdown("##### 🥇 Ranking jugadores de campo")
                     votos_j = df_votos[df_votos["Categoria"] == "Jugador de Campo"]["Candidato_Elegido"].value_counts().reset_index()
                     st.dataframe(votos_j, hide_index=True)
                     
                 with col2:
-                    st.markdown("##### 🧤 Ranking Arqueros")
+                    st.markdown("##### 🧤 Ranking arqueros")
                     votos_a = df_votos[df_votos["Categoria"] == "Arquero"]["Candidato_Elegido"].value_counts().reset_index()
                     st.dataframe(votos_a, hide_index=True)
                     
@@ -150,6 +150,35 @@ if vista == "⚙️ Director de Torneo":
                     st.write(f"- {jefe}")
             else:
                 st.info("Aún no hay votos registrados en la planilla.")
+                
+            # --- RESULTADOS FINALES DENTRO DEL PANEL DEL DIRECTOR ---
+            st.divider()
+            st.subheader("🏆 Resultados Finales")
+            
+            if not df_votos.empty:
+                # Filtramos los votos por categoría para calcular correctamente
+                votos_jc = df_votos[df_votos["Categoria"] == "Jugador de Campo"]["Candidato_Elegido"]
+                votos_arq = df_votos[df_votos["Categoria"] == "Arquero"]["Candidato_Elegido"]
+                
+                col_res1, col_res2 = st.columns(2)
+                
+                with col_res1:
+                    if not votos_jc.empty:
+                        jugador_ganador = votos_jc.value_counts().idxmax()
+                        votos_jugador = votos_jc.value_counts().max()
+                        st.success(f"🏑 **Jugador más votado:**\n\n{jugador_ganador} ({votos_jugador} votos)")
+                    else:
+                        st.info("Aún no hay votos para jugadores.")
+                        
+                with col_res2:
+                    if not votos_arq.empty:
+                        arquero_ganador = votos_arq.value_counts().idxmax()
+                        votos_arquero = votos_arq.value_counts().max()
+                        st.info(f"🧤 **Arquero más votado:**\n\n{arquero_ganador} ({votos_arquero} votos)")
+                    else:
+                        st.info("Aún no hay votos para arqueros.")
+            else:
+                st.warning("Aún no se han recibido votos para calcular a los ganadores.")
 
 # ==========================================
 # VISTA: VOTACIÓN PÚBLICA (JEFES DE EQUIPO)
@@ -160,7 +189,7 @@ elif vista == "🏆 Votación Pública":
         st.image("logo.png", use_container_width=True)
     with col_texto:
         st.title("Elección de los mejores del Torneo")
-    
+        
     if not datos:
         st.warning("⏳ El Director de Torneo está configurando el sistema.")
     else:
@@ -187,10 +216,10 @@ elif vista == "🏆 Votación Pública":
                 identificador_unico = f"{equipo_votante} - {jefe_votante}"
                 
                 if identificador_unico in jefes_que_votaron:
-                    st.error("🚨 El voto de tu equipo ya fue registrado en la mesa.")
+                    st.error("🚨 El voto de tu equipo ya fue registrado por el Director.")
                 else:
                     st.divider()
-                    st.subheader("Selección de Candidatos")
+                    st.subheader("Selección de candidatos")
                     
                     def elegir_candidato(titulo, key, es_arquero=False):
                         eq = st.selectbox(f"Club del {titulo}:", lista_equipos, key=f"eq_{key}")
@@ -214,7 +243,7 @@ elif vista == "🏆 Votación Pública":
 
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.markdown("#### 🏑 Jugadores de Campo")
+                        st.markdown("#### 🏑 Jugadores de campo")
                         jc1 = elegir_candidato("Jugador 1", "jc1", es_arquero=False)
                         jc2 = elegir_candidato("Jugador 2", "jc2", es_arquero=False)
                         
@@ -224,7 +253,7 @@ elif vista == "🏆 Votación Pública":
                         arq2 = elegir_candidato("Arquero 2", "arq2", es_arquero=True)
                         
                     st.divider()
-                    if st.button("🗳️ Enviar Votos a la Mesa", type="primary", use_container_width=True):
+                    if st.button("🗳️ Enviar votos al Director", type="primary", use_container_width=True):
                         selecciones = [jc1, jc2, arq1, arq2]
                         
                         if None in selecciones:
