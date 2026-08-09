@@ -124,11 +124,11 @@ if vista == "⚙️ Director de Torneo":
                         registros.append({"Equipo": eq, "Tipo": "Jefe", "Nombre": jefe})
                         
                # --- INICIO DEL TRUCO DE LIMPIEZA ---
-                # Agregamos 500 filas nulas al final para sobreescribir y "borrar" cualquier equipo viejo que haya quedado abajo
+                # Agregamos filas vacías (con texto vacío "", no con None) para sobreescribir y limpiar
                 filas_sobrantes = 500 - len(registros)
                 if filas_sobrantes > 0:
                     for _ in range(filas_sobrantes):
-                        registros.append({"Equipo": None, "Tipo": None, "Nombre": None})
+                        registros.append({"Equipo": "", "Tipo": "", "Nombre": ""})
                         
                 nuevo_df = pd.DataFrame(registros)
                 if not nuevo_df.empty:
