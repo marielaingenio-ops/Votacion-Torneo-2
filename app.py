@@ -72,7 +72,7 @@ def procesar_dat(ruta_archivo):
                 nombre_eq = equipos_temp[id_equipo]
                 torneo_data[nombre_eq]["jefes"].append(nombre_jefe)
                 
-    # torneo_data = {k: v for k, v in torneo_data.items() if v["jugadores"]}
+    torneo_data = {k: v for k, v in torneo_data.items() if v["jugadores"]}
     for k in torneo_data:
         torneo_data[k]["jugadores"].sort()
         torneo_data[k]["jefes"].sort()
