@@ -123,15 +123,23 @@ if vista == "⚙️ Director de Torneo":
                     for jefe in eq_data["jefes"]:
                         registros.append({"Equipo": eq, "Tipo": "Jefe", "Nombre": jefe})
                         
+               # --- INICIO DEL TRUCO DE LIMPIEZA ---
+                # Agregamos 500 filas nulas al final para sobreescribir y "borrar" cualquier equipo viejo que haya quedado abajo
+                filas_sobrantes = 500 - len(registros)
+                if filas_sobrantes > 0:
+                    for _ in range(filas_sobrantes):
+                        registros.append({"Equipo": None, "Tipo": None, "Nombre": None})
+                        
                 nuevo_df = pd.DataFrame(registros)
                 if not nuevo_df.empty:
-                    conn.clear(worksheet="Padron")
+                    # Actualizamos Google Sheets con los datos nuevos + las filas vacías al final
                     conn.update(worksheet="Padron", data=nuevo_df)
                     st.cache_data.clear()
                     st.success("¡Equipos anteriores borrados y nuevo padrón guardado exitosamente!")
                     st.rerun()
                 else:
                     st.error("El archivo no contenía información válida.")
+                # --- FIN DEL TRUCO DE LIMPIEZA ---
                     
         # 2. CONFIGURACIÓN DE ARQUEROS
         if datos:
