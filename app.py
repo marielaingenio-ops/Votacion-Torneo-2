@@ -115,7 +115,7 @@ if vista == "⚙️ Director de Torneo":
         st.markdown("Sube el archivo `.dat` del torneo aquí. Esto guardará todos los equipos directamente en la nube.")
         archivo_subido = st.file_uploader("Arrastra aquí el archivo .dat", type=["dat"])
         
-       if archivo_subido is not None:
+        if archivo_subido is not None:
             if st.button("🚀 Procesar y subir a Google Sheets", type="primary"):
                 contenido = archivo_subido.getvalue().decode("utf-8", errors="ignore")
                 nuevo_torneo_data = procesar_texto_dat(contenido)
@@ -133,21 +133,6 @@ if vista == "⚙️ Director de Torneo":
                     conn.update(worksheet="Padron", data=nuevo_df)
                     st.cache_data.clear()
                     st.success("¡Nuevo padrón guardado exitosamente!")
-                    st.rerun()
-                else:
-                    st.error("El archivo no contenía información válida.")
-                        
-                # --- INICIO DEL TRUCO DE LIMPIEZA ---
-                filas_sobrantes = 500 - len(registros)
-                if filas_sobrantes > 0:
-                    for _ in range(filas_sobrantes):
-                        registros.append({"Equipo": "", "Tipo": "", "Nombre": ""})
-                        
-                nuevo_df = pd.DataFrame(registros)
-                if not nuevo_df.empty:
-                    conn.update(worksheet="Padron", data=nuevo_df)
-                    st.cache_data.clear()
-                    st.success("¡Equipos anteriores borrados y nuevo padrón guardado exitosamente!")
                     st.rerun()
                 else:
                     st.error("El archivo no contenía información válida.")
