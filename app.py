@@ -253,27 +253,35 @@ elif vista == "🏆 Votación Pública":
                         arq1 = elegir_candidato("Arquero 1", "arq1", es_arquero=True)
                         arq2 = elegir_candidato("Arquero 2", "arq2", es_arquero=True)
                         
-                    st.divider()
-                    if st.button("🗳️ Enviar votos al Director", type="primary", use_container_width=True):
-                        selecciones = [jc1, jc2, arq1, arq2]
+                  st.divider()
+                    if st.button("🗳️ Enviar votos al Director/a de Torneo", type="primary", use_container_width=True):
+                        # Filtramos solo los campos que fueron seleccionados (ignoramos los vacíos)
+                        votos_jc = [v for v in [jc1, jc2] if v is not None]
+                        votos_arq = [v for v in [arq1, arq2] if v is not None]
+                        todos_los_votos = votos_jc + votos_arq
                         
-                        if None in selecciones:
-                            st.error("⚠️ Elige a los 4 candidatos.")
-                        elif len(set(selecciones)) != 4:
-                            st.error("⚠️ No puedes repetir al mismo jugador.")
+                        # Validaciones
+                        if len(votos_jc) == 0:
+                            st.error("⚠️ Debes elegir al menos un (1) Jugador de Campo.")
+                        elif len(votos_arq) == 0:
+                            st.error("⚠️ Debes elegir al menos un (1) Arquero.")
+                        elif len(todos_los_votos) != len(set(todos_los_votos)):
+                            st.error("⚠️ No puedes votar a la misma persona dos veces.")
                         else:
-                            nuevos_votos = pd.DataFrame([
-                                {"Identificador_Votante": identificador_unico, "Categoria": "Jugador de Campo", "Candidato_Elegido": jc1},
-                                {"Identificador_Votante": identificador_unico, "Categoria": "Jugador de Campo", "Candidato_Elegido": jc2},
-                                {"Identificador_Votante": identificador_unico, "Categoria": "Arquero", "Candidato_Elegido": arq1},
-                                {"Identificador_Votante": identificador_unico, "Categoria": "Arquero", "Candidato_Elegido": arq2},
-                            ])
+                            # Preparamos solo los votos que realmente se hicieron
+                            registros = []
+                            for voto in votos_jc:
+                                registros.append({"Identificador_Votante": identificador_unico, "Categoria": "Jugador de Campo", "Candidato_Elegido": voto})
+                            for voto in votos_arq:
+                                registros.append({"Identificador_Votante": identificador_unico, "Categoria": "Arquero", "Candidato_Elegido": voto})
+                                
+                            nuevos_votos = pd.DataFrame(registros)
                             
-                            # Actualizamos la planilla
+                            # Actualizamos la planilla en Google Sheets
                             df_actualizado = pd.concat([df_votos, nuevos_votos], ignore_index=True)
-                            conn.update(data=df_actualizado)
+                            conn.update(worksheet="Votos", data=df_actualizado)
+                            st.cache_data.clear()
                             
                             st.balloons()
-                            st.success("✅ Tus votos han sido correctamente enviados. Puedes cerrar esta ventana.")
-st.divider()
-st.markdown("<div style='text-align: center; color: gray;'><small>Desarrollado con 💻 por <b>Mariela Rosales</b></small></div>", unsafe_allow_html=True)
+                            st.success("✅ Tus votos han sido enviados. Puedes cerrar esta ventana.")
+                            st.markdown("<div style='text-align: center; color: gray;'><small>Desarrollado con 💻 por <b>MR</b></small></div>", unsafe_allow_html=True)
